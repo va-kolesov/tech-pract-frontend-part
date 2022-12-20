@@ -1,0 +1,15 @@
+.Grid-wrapper {
+    line-height: 23px;
+    display: grid;
+    width: 100%;
+}
+
+.Grid-Header,
+.Grid-Row {
+    display: contents;
+}
+
+.Grid-Cell {
+    box-sizing: border-box;
+    border: #444 solid 1px;
+}
