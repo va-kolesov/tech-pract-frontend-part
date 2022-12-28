@@ -11,7 +11,6 @@ body {
         repeating-linear-gradient(to right, #fff0 0, #fff0 24px, #5f84ff 25px),
         linear-gradient(to left, #fff0 0,#fff0 100px, #ff5f5f 101px, #fff0 102px, #fff0),
         #fefefe;
-    /*background-size: 25px 25px;*/
     padding: 25px;
     width: 1350px;
 }

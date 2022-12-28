@@ -45,9 +45,28 @@ const STUDENTS_DATA = [
         Finished: true
     }
 ];
+interface AppProps {
+    
+}
+ 
+interface AppState {
+    
+}
 
-export default () => (
-    <>
-        <Grid columnsProps={STUDENT_COLUMNS} data={STUDENTS_DATA}/>
-    </>
-);
+const URL = '';
+
+class App extends React.Component<AppProps, AppState> {
+    componentDidMount() {
+        fetch(URL).then((result) => {
+            console.log(result);
+        });
+    }
+    render() { 
+        return ( 
+        <>
+            <Grid columnsProps={STUDENT_COLUMNS} data={STUDENTS_DATA}/>
+        </> );
+    }
+}
+
+export default App;
