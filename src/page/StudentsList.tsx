@@ -4,9 +4,10 @@ import Grid from '../grid/Grid';
 import {default as List} from '../list/List';
 import Overlay from './Overlay';
 import './StudentsList.css';
-
+import {Add} from '../Icons';
 interface StudentsListProps {
     onOpenStudent: Function;
+    onAddStudent: Function;
 }
  
 interface StudentsListState {
@@ -50,8 +51,15 @@ class StudentsList extends React.Component<StudentsListProps, StudentsListState>
                 bach: students.filter((stud) => stud.Degree === 'Бакалавриат'),
                 spec: students.filter((stud) => stud.Degree === 'Специалитет'),
                 magi: students.filter((stud) => stud.Degree === 'Магистратура')
-            })
-        })
+            });
+        }).catch(() => {
+                this.setState({
+                loaded: true,
+                bach: null,
+                spec: null,
+                magi: null
+            });
+        });
     }
 
     template = ({data}: {data: Dict}): React.ReactElement => {
@@ -74,7 +82,10 @@ class StudentsList extends React.Component<StudentsListProps, StudentsListState>
         return ( 
             <div className='StudentsList Content-Column'>
                 <Overlay enabled={!this.state.loaded}/>
-                <span className='Heading'>Список студентов</span>
+                <span className='Heading'>Список студентов
+                <Add onClick={() => {
+                    this.props.onAddStudent();
+                }}/></span>
                 <Grid data={[]} columnsProps={GRID_HEADER_COLUMNS} ></Grid>
                 <div className='Content-Row'>
                     <List colorStyle='violet' template={this.template} data={this.state.bach}/>

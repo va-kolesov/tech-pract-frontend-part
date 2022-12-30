@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStudentInfoByStudentID, IAdvisorData, IStudentData, IWorkData, TDataType } from '../Api';
+import { createStudent, getStudentInfoByStudentID, IAdvisorData, IStudentData, IWorkData, TDataType, updateStudentInfo } from '../Api';
 import {default as Grid, ColumnProps} from '../grid/Grid';
 import './Student.css';
 import {Edit, Exit, Save} from '../Icons';
@@ -76,7 +76,7 @@ const ADVISOR_COLUMNS: ColumnProps[] = [
 ];
 
 interface StudentProps {
-    selectedStudentID: number;
+    selectedStudentID: number | null;
     onExit: Function;
 }
  
@@ -94,22 +94,44 @@ class Student extends React.Component<StudentProps, StudentState> {
     constructor(props: StudentProps) {
         super(props);
         this.state = {
-            loaded: false,
-            mode: 'read',
+            loaded: props.selectedStudentID ? false : true,
+            mode: props.selectedStudentID ? 'read' : 'edit',
             studentData: null,
             worksData: null,
             advisorData: null
         };
     }
     componentDidMount() {
-        getStudentInfoByStudentID(this.props.selectedStudentID).then((data) => {
-            this.setState({
-                worksData: data?.Works || [],
-                advisorData: data?.Works?.[0]?.Advisor ? [data?.Works?.[0]?.Advisor] : [],
-                studentData: data,
-                loaded: true
+        if (this.props.selectedStudentID) {
+            getStudentInfoByStudentID(this.props.selectedStudentID).then((data) => {
+                if (data) {
+                    data.Works = data.Works || [];
+                    this.setState({
+                        worksData: data?.Works || [],
+                        advisorData: data?.Works?.[0]?.Advisor ? [data?.Works?.[0]?.Advisor] : [],
+                        studentData: data,
+                        loaded: true
+                    });
+                } else {
+
+                }
+            }).catch(() => {
+                this.setState({
+                    worksData: null,
+                    advisorData: null,
+                    studentData: null,
+                    loaded: true
+                });
             });
-        })
+        }
+    }
+    saveData() {
+        this.setState({mode: 'read'});
+        if (this.props.selectedStudentID && this.state.studentData) {
+            updateStudentInfo(this.state.studentData);
+        } else if (this.state.studentData) {
+            createStudent(this.state.studentData);
+        }
     }
     render() { 
         return (
@@ -119,7 +141,9 @@ class Student extends React.Component<StudentProps, StudentState> {
                 <div className='Content-Column'>
                 {
                     this.state.studentData 
-                    ? <Grid columnsProps={STUDENT_COLUMNS} data={[this.state.studentData]}/>
+                    ? <Grid isEditable={this.state.mode === 'edit'}
+                            columnsProps={STUDENT_COLUMNS}
+                            data={[this.state.studentData]}/>
                     : null
                 }
                     <div className='Content-Row'>
@@ -127,7 +151,9 @@ class Student extends React.Component<StudentProps, StudentState> {
                             <span className='Heading'>Научные работы</span>
                             {
                                 this.state.studentData 
-                                ? <Grid columnsProps={WORK_COLUMNS} data={this.state.worksData || []}/>
+                                ? <Grid isEditable={this.state.mode === 'edit'} 
+                                        columnsProps={WORK_COLUMNS}
+                                        data={this.state.worksData || []}/>
                                 : null
                             }
                         </div>
@@ -142,9 +168,8 @@ class Student extends React.Component<StudentProps, StudentState> {
                     </div>
                 </div>
                 <div className='Footer'>
-                    { this.state.mode === 'read'
-                        ? <Edit onClick={() => this.setState({mode: 'edit'})}/>
-                        : <Save onClick={() => this.setState({mode: 'read'})}/>}
+                    { this.state.mode === 'read' && !this.state.studentData?.Finished && <Edit onClick={() => this.setState({mode: 'edit'})}/> }
+                    { this.state.mode === 'edit' && <Save onClick={() => this.saveData()}/> || <span/> }
                     <Exit onClick={() => this.props.onExit?.()}/>
                 </div>
             </div>

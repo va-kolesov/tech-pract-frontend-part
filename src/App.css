@@ -29,8 +29,10 @@ html,
 }
 
 .Heading {
+    display: flex;
     font-size: 36px;
     height: 100px;
+    align-items: center;
 }
 
 .Content-Row {

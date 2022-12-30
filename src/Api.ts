@@ -61,7 +61,10 @@ export function getStudentsList(): Promise<IStudentData[]> {
             }
         )
         .then((response: Response) => {
-            return response.json() as unknown as IStudentData[];
+            return response.json();
+        })
+        .then(({value}: {value: IStudentData[]}) => {
+            return value;
         });
     }
 }
@@ -87,7 +90,10 @@ export function getStudentInfoByStudentID(ID: number): Promise<IStudentData|null
             }
         )
         .then((response: Response) => {
-            return response.json() as unknown as IStudentData;
+            return response.json();
+        })
+        .then(({value}: {value: IStudentData}) => {
+            return value;
         }).catch((reason) => {
             alert(`Ошбика получения данных. Студент с номером студенческого ${ID} не существует.`);
         }).then();

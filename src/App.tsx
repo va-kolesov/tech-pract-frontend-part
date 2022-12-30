@@ -5,7 +5,7 @@ import Student from './Page/Student';
  
 interface AppState {
     currentPage: 'list' | 'student';
-    selectedStudentID: number; 
+    selectedStudentID: number | null; 
 }
 
 class App extends React.Component<{}, AppState> {
@@ -27,10 +27,19 @@ class App extends React.Component<{}, AppState> {
                     {
                         this.state.currentPage === 'list'
                         ? <StudentsList 
-                        onOpenStudent={(ID: number) => this.setState({
-                            currentPage: 'student',
-                            selectedStudentID: ID
-                        }) }/>
+                            onAddStudent={
+                                (ID: number) => this.setState({
+                                    currentPage: 'student',
+                                    selectedStudentID: null
+                                }) 
+                            }
+                            onOpenStudent={
+                                (ID: number) => this.setState({
+                                    currentPage: 'student',
+                                    selectedStudentID: ID
+                                }) 
+                            }
+                        />
                         : <Student 
                             selectedStudentID={this.state.selectedStudentID}
                             onExit={() => this.setState({currentPage: 'list'})}/>}
