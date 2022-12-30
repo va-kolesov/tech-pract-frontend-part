@@ -88,13 +88,15 @@ export function getStudentInfoByStudentID(ID: number): Promise<IStudentData|null
         )
         .then((response: Response) => {
             return response.json() as unknown as IStudentData;
-        });
+        }).catch((reason) => {
+            alert(`Ошбика получения данных. Студент с номером студенческого ${ID} не существует.`);
+        }).then();
     }
 }
 
 export function updateStudentInfo(StudentInfo: IStudentData): Promise<void> {
     if (USE_MOCK) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const index = STUDENTS.findIndex((student => student.ID === StudentInfo.ID));
                 if (index !== -1) {
@@ -102,8 +104,10 @@ export function updateStudentInfo(StudentInfo: IStudentData): Promise<void> {
                         ...STUDENTS[index],
                         ...StudentInfo
                     }
+                    resolve();
+                } else {
+                    reject()
                 }
-                resolve();
             }, DELAY)
         });
     } else {
@@ -114,6 +118,8 @@ export function updateStudentInfo(StudentInfo: IStudentData): Promise<void> {
                 'Content-Type': 'application/json',
             },
                 body: JSON.stringify(StudentInfo),
+            }).catch((reason) => {
+                alert(`Ошбика обновления данных. Студент с номером студенческого ${StudentInfo.ID} не существует, либо он в архиве.`);
             }).then();
     }
 }
@@ -125,7 +131,6 @@ export function createStudent(StudentInfo: IStudentData): Promise<void> {
                 const index = STUDENTS.findIndex((student => student.ID === StudentInfo.ID));
                 if (index === -1) {
                     STUDENTS.push({
-                        ...STUDENTS[index],
                         ...StudentInfo
                     });
                     resolve();
@@ -142,6 +147,30 @@ export function createStudent(StudentInfo: IStudentData): Promise<void> {
                 'Content-Type': 'application/json',
             },
                 body: JSON.stringify(StudentInfo),
+            }).catch((reason) => {
+                alert(`Ошбика создания студента. Студент с номером студенческого ${StudentInfo.ID} уже существует.`);
+            }).then();
+    }
+}
+
+export function createWork(WorkData: IWorkData): Promise<void> {
+    if (USE_MOCK) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                    WORKS.push({
+                        ...WorkData,
+                    });
+                    resolve();
+            }, DELAY)
+        });
+    } else {
+        return fetch(
+            API_METHODS.createWork, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+                body: JSON.stringify(WorkData),
             }).then();
     }
 }

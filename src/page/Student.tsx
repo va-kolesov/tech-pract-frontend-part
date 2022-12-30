@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStudentInfoByStudentID, IStudentData, TDataType } from '../Api';
+import { getStudentInfoByStudentID, IAdvisorData, IStudentData, IWorkData, TDataType } from '../Api';
 import {default as Grid, ColumnProps} from '../grid/Grid';
 import './Student.css';
 import {Edit, Exit, Save} from '../Icons';
@@ -84,8 +84,8 @@ interface StudentState {
     loaded: boolean;
     mode: 'read' | 'edit';
     studentData: IStudentData | null;
-    worksData: IStudentData | null;
-    advisorData: IStudentData | null;
+    worksData: IWorkData[] | null;
+    advisorData: IAdvisorData[] | null;
 }
 
 class Student extends React.Component<StudentProps, StudentState> {
@@ -104,6 +104,8 @@ class Student extends React.Component<StudentProps, StudentState> {
     componentDidMount() {
         getStudentInfoByStudentID(this.props.selectedStudentID).then((data) => {
             this.setState({
+                worksData: data?.Works || [],
+                advisorData: data?.Works?.[0]?.Advisor ? [data?.Works?.[0]?.Advisor] : [],
                 studentData: data,
                 loaded: true
             });
@@ -125,7 +127,7 @@ class Student extends React.Component<StudentProps, StudentState> {
                             <span className='Heading'>Научные работы</span>
                             {
                                 this.state.studentData 
-                                ? <Grid columnsProps={WORK_COLUMNS} data={this.state.studentData.Works || []}/>
+                                ? <Grid columnsProps={WORK_COLUMNS} data={this.state.worksData || []}/>
                                 : null
                             }
                         </div>
@@ -133,7 +135,7 @@ class Student extends React.Component<StudentProps, StudentState> {
                             <span className='Heading'>Научный руководитель</span>
                             {
                                 this.state.studentData 
-                                ? <Grid columnsProps={ADVISOR_COLUMNS} data={[this.state.studentData]}/>
+                                ? <Grid columnsProps={ADVISOR_COLUMNS} data={this.state.advisorData || []}/>
                                 : null
                             }
                         </div>
