@@ -1,71 +1,42 @@
-import React from "react";
-import {default as Grid, ColumnProps} from './grid/Grid';
+import React from 'react';
 import './App.css';
-
-const STUDENT_COLUMNS: ColumnProps[] = [
-    {
-        displayProperty: 'FullName',
-        header: 'ФИО',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'ID',
-        header: '№ студенческого',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Year',
-        header: 'Год поступления',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Degree',
-        header: 'Ступень образования',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Faculty',
-        header: 'Факультет',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Finished',
-        header: 'Обучение окончено',
-        width: '1fr'
-    }
-]
-
-const STUDENTS_DATA = [
-    {
-        FullName: 'Колесов Вадим Александрович',
-        ID: '12345678',
-        Year: 2017,
-        Degree: 'Бакалавриат',
-        Faculty: 'Математический',
-        Finished: true
-    }
-];
-interface AppProps {
-    
-}
+import StudentsList from './page/StudentsList';
+import Student from './Page/Student';
  
 interface AppState {
-    
+    currentPage: 'list' | 'student';
+    selectedStudentID: number; 
 }
 
-const URL = '';
-
-class App extends React.Component<AppProps, AppState> {
-    componentDidMount() {
-        fetch(URL).then((result) => {
-            console.log(result);
-        });
+class App extends React.Component<{}, AppState> {
+    state: AppState;
+    constructor(props: {}) {
+        super(props);
+        this.state = {
+            currentPage: 'student',
+            selectedStudentID: 12345678
+        };
     }
-    render() { 
-        return ( 
-        <>
-            <Grid columnsProps={STUDENT_COLUMNS} data={STUDENTS_DATA}/>
-        </> );
+    componentDidMount() {
+
+    }
+    render() {
+        return (
+            <div className='App'>
+                <div className='App-Content Content-Column'>
+                    {
+                        this.state.currentPage === 'list'
+                        ? <StudentsList 
+                        onOpenStudent={(ID: number) => this.setState({
+                            currentPage: 'student',
+                            selectedStudentID: ID
+                        }) }/>
+                        : <Student 
+                            selectedStudentID={this.state.selectedStudentID}
+                            onExit={() => this.setState({currentPage: 'list'})}/>}
+                </div>
+            </div>
+        );
     }
 }
 

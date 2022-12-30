@@ -1,15 +1,13 @@
 import * as React from 'react';
 import './Grid.css';
-
-interface Dict {
-    [key:string]: unknown;
-}
+import type {Dict, TDataType} from '../Api';
 
 export interface ColumnProps {
     displayProperty: string;
     isEditing?: boolean;
-    width: string;
-    header: string;
+    template?: ({value}: {value: TDataType}) => React.ReactElement;
+    width?: string;
+    header?: string;
 }
 
 interface GridProps {
@@ -24,14 +22,14 @@ interface RowProps {
 }
 
 const getColumnsStyle = (columns: ColumnProps[]) => {
-    let gridTemplateColumns = columns.map(c => c.width).join(' ');
+    let gridTemplateColumns = columns.map(c => (c.width || '1fr')).join(' ');
     return {'gridTemplateColumns': gridTemplateColumns};
 }
 
-const Cell = ({value}: {value: string | number | boolean}) => {
+const Cell = ({value, CellTemplate}: {value: TDataType, CellTemplate?: ({value}: {value: TDataType}) => React.ReactElement}) => {
     return (
         <div className='Grid-Cell'>
-            {value}
+            {CellTemplate ? <CellTemplate value={value}/> : value?.toString()}
         </div>
     );
 }
@@ -41,7 +39,7 @@ const Header = ({columnsProps}: {columnsProps: ColumnProps[]}) => {
             {
                 columnsProps.map((column) => {
                     return (
-                        <Cell value={column.header}/>
+                        <Cell key={column.header} value={column.header}/>
                     )
                 })
             }
@@ -54,7 +52,9 @@ const Row = ({columnsProps, data}: {columnsProps: ColumnProps[], data: Dict}) =>
             {
                 columnsProps.map((column) => {
                     return (
-                        <Cell value={data[column.displayProperty]}/>
+                        <Cell  key={column.displayProperty}
+                               value={data[column.displayProperty]}
+                               CellTemplate={column.template}/>
                     )
                 })
             }
@@ -67,9 +67,9 @@ const Grid = (props: GridProps) => {
             <>
                 <Header columnsProps={props.columnsProps}/>
                 {
-                    props.data.map((item) => {
+                    props.data.map((item, index) => {
                         return (
-                            <Row columnsProps={props.columnsProps} data={item}/>
+                            <Row key={index} columnsProps={props.columnsProps} data={item}/>
                         )
                     })
                 }

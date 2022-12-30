@@ -1,0 +1,22 @@
+.List {
+    width: 100%;
+    height: 100%;
+    flex-grow: 0;
+    font-size: 16px;
+    overflow-y: scroll;
+}
+.List::-webkit-scrollbar {
+    display: none;
+}
+
+.violet {
+    background-color: rgba(161, 68, 248, 0.329);
+}
+
+.green {
+    background-color: rgba(81, 241, 129, 0.329);
+}
+
+.red {
+    background-color: rgba(248, 68, 68, 0.329);
+}

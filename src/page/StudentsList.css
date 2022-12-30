@@ -1,0 +1,42 @@
+.StudentsList {
+    height: 100%;
+    width: 900px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.StudentsList-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    height: 100px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    padding: 0 25px;
+    cursor: pointer;
+    transition: transform 0.4s;
+}
+
+.StudentsList-item:hover {
+    transform: scale(0.95);
+}
+
+.StudentsList-item::after {
+    position: absolute;
+    content: '';
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    right: 27px;
+    top: 40%;
+}
+
+.StudentsList-item_finished::after {
+    background-color: rgb(33, 199, 33);
+}
+
+.StudentsList-item_notFinished::after {
+    background-color: rgb(202, 32, 32);
+}
