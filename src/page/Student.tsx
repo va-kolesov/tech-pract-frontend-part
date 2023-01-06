@@ -35,6 +35,7 @@ const STUDENT_COLUMNS: ColumnProps[] = [
         displayProperty: 'Finished',
         header: 'Обучение окончено',
         width: '1fr',
+        type: 'boolean',
         template: ({value} : {value: TDataType}) => (<div>{value ? 'Да' : 'Нет'}</div>)
     }
 ];
@@ -82,6 +83,7 @@ interface StudentProps {
  
 interface StudentState {
     loaded: boolean;
+    changed: boolean;
     mode: 'read' | 'edit';
     studentData: IStudentData | null;
     worksData: IWorkData[] | null;
@@ -95,10 +97,11 @@ class Student extends React.Component<StudentProps, StudentState> {
         super(props);
         this.state = {
             loaded: props.selectedStudentID ? false : true,
+            changed: false,
             mode: props.selectedStudentID ? 'read' : 'edit',
-            studentData: null,
-            worksData: null,
-            advisorData: null
+            studentData: props.selectedStudentID ? null : {} as IStudentData,
+            worksData: props.selectedStudentID ? null : [],
+            advisorData: props.selectedStudentID ? null : []
         };
     }
     componentDidMount() {
@@ -108,7 +111,7 @@ class Student extends React.Component<StudentProps, StudentState> {
                     data.Works = data.Works || [];
                     this.setState({
                         worksData: data?.Works || [],
-                        advisorData: data?.Works?.[0]?.Advisor ? [data?.Works?.[0]?.Advisor] : [],
+                        advisorData: data?.Works?.map((work)=>work.Advisor),
                         studentData: data,
                         loaded: true
                     });
@@ -125,9 +128,27 @@ class Student extends React.Component<StudentProps, StudentState> {
             });
         }
     }
+
+    validateData() {
+        if (!this.state.studentData) {
+            return false;
+        } else {
+            if (!this.state.studentData.FullName || !this.state.studentData.Degree || !this.state.studentData.Faculty || !this.state.studentData.ID || !this.state.studentData.Year) {
+                return false;
+            } else {
+                this.state.studentData.Works = this.state.worksData || [];
+                if (this.state.advisorData?.length !== this.state.worksData?.length) {
+                    return false;
+                } else {
+                    this.state.worksData?.forEach((work, i) => work.Advisor=this.state.advisorData?.[i] as IAdvisorData)
+                }
+            }
+        }
+    }
     saveData() {
         this.setState({mode: 'read'});
         if (this.props.selectedStudentID && this.state.studentData) {
+
             updateStudentInfo(this.state.studentData);
         } else if (this.state.studentData) {
             createStudent(this.state.studentData);
@@ -143,6 +164,17 @@ class Student extends React.Component<StudentProps, StudentState> {
                     this.state.studentData 
                     ? <Grid isEditable={this.state.mode === 'edit'}
                             columnsProps={STUDENT_COLUMNS}
+                            onValueChanged={
+                                (val, field) => {
+                                    if (this.state.studentData) {
+                                        this.state.studentData[field] = val;
+                                        this.setState({
+                                            studentData: this.state.studentData,
+                                            changed: true
+                                        });
+                                    }
+                                }
+                            }
                             data={[this.state.studentData]}/>
                     : null
                 }
@@ -153,7 +185,19 @@ class Student extends React.Component<StudentProps, StudentState> {
                                 this.state.studentData 
                                 ? <Grid isEditable={this.state.mode === 'edit'} 
                                         columnsProps={WORK_COLUMNS}
-                                        data={this.state.worksData || []}/>
+                                        data={this.state.worksData || []}
+                                        onValueChanged={
+                                            (val, field, index) => {
+                                                if (this.state.worksData) {
+                                                    this.state.worksData[index][field] = val;
+                                                    this.setState({
+                                                        worksData: this.state.worksData,
+                                                        changed: true
+                                                    });
+                                                }
+                                            }
+                                        }
+                                        />
                                 : null
                             }
                         </div>
@@ -161,7 +205,20 @@ class Student extends React.Component<StudentProps, StudentState> {
                             <span className='Heading'>Научный руководитель</span>
                             {
                                 this.state.studentData 
-                                ? <Grid columnsProps={ADVISOR_COLUMNS} data={this.state.advisorData || []}/>
+                                ? <Grid isEditable={this.state.mode === 'edit'}
+                                        columnsProps={ADVISOR_COLUMNS}
+                                        data={this.state.advisorData || []}
+                                        onValueChanged={
+                                            (val, field, index) => {
+                                                if (this.state.advisorData) {
+                                                    this.state.advisorData[index][field] = val;
+                                                    this.setState({
+                                                        advisorData: this.state.advisorData,
+                                                        changed: true
+                                                    });
+                                                }
+                                            }
+                                        }/>
                                 : null
                             }
                         </div>

@@ -13,8 +13,8 @@ class App extends React.Component<{}, AppState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            currentPage: 'student',
-            selectedStudentID: 12345678
+            currentPage: 'list',
+            selectedStudentID: null
         };
     }
     componentDidMount() {

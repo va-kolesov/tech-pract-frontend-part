@@ -63,8 +63,8 @@ export function getStudentsList(): Promise<IStudentData[]> {
         .then((response: Response) => {
             return response.json();
         })
-        .then(({value}: {value: IStudentData[]}) => {
-            return value;
+        .then((data: {value: IStudentData[]}) => {
+            return data.value;
         });
     }
 }
