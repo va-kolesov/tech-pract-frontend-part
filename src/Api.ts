@@ -57,7 +57,7 @@ export function getStudentsList(): Promise<IStudentData[]> {
         return fetch(
             API_METHODS.getStudentsList, 
             {
-                mode: 'no-cors'
+                mode: 'cors'
             }
         )
         .then((response: Response) => {
@@ -86,7 +86,7 @@ export function getStudentInfoByStudentID(ID: number): Promise<IStudentData|null
         return fetch(
             API_METHODS.getStudentInfoByStudentID + `?ID=${ID}`, 
             {
-                mode: 'no-cors'
+                mode: 'cors'
             }
         )
         .then((response: Response) => {
@@ -124,6 +124,7 @@ export function updateStudentInfo(StudentInfo: IStudentData): Promise<void> {
         return fetch(
             API_METHODS.updateStudentInfo, {
             method: 'POST',
+            mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -153,6 +154,7 @@ export function createStudent(StudentInfo: IStudentData): Promise<void> {
         return fetch(
             API_METHODS.createStudent, {
             method: 'POST',
+            mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
             },
