@@ -146,12 +146,15 @@ class Student extends React.Component<StudentProps, StudentState> {
         }
     }
     saveData() {
-        this.setState({mode: 'read'});
-        if (this.props.selectedStudentID && this.state.studentData) {
-
-            updateStudentInfo(this.state.studentData);
-        } else if (this.state.studentData) {
-            createStudent(this.state.studentData);
+        if (this.validateData()) {
+            if (this.props.selectedStudentID && this.state.studentData) {
+                updateStudentInfo(this.state.studentData);
+            } else if (this.state.studentData) {
+                createStudent(this.state.studentData);
+            }
+            this.setState({mode: 'read'});
+        } else {
+            alert('Проверьте правильность введенных данных!');
         }
     }
     render() { 
