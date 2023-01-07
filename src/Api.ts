@@ -1,4 +1,4 @@
-import { STUDENTS, WORKS } from './DataMock';
+import { STUDENTS, WORKS, setWorks } from './DataMock';
 
 export type TDataType = string | number | boolean | undefined | Dict | Dict[];
 
@@ -105,6 +105,10 @@ export function updateStudentInfo(StudentInfo: IStudentData): Promise<void> {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const index = STUDENTS.findIndex((student => student.ID === StudentInfo.ID));
+                
+                const worksData = WORKS.filter((work) => work.AuthorID !== StudentInfo.ID);
+                worksData.push(...(StudentInfo.Works || []));
+                setWorks(worksData);
                 if (index !== -1) {
                     STUDENTS[index] = {
                         ...STUDENTS[index],

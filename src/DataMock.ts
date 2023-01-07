@@ -184,7 +184,7 @@ function getWorkData(AuthorID: number, num: number): IWorkData {
         Advisor: ADVISORS[AuthorID % 4]
     }
 }
-const WORKS: IWorkData[] = [
+let WORKS: IWorkData[] = [
     {
         ...getWorkData(12345678, 1)
     },
@@ -221,9 +221,14 @@ const WORKS: IWorkData[] = [
     {
         ...getWorkData(12345688, 1)
     }
-]
+];
+
+function setWorks(works: IWorkData[]) {
+    WORKS = works;
+}
 
 export {
     STUDENTS,
-    WORKS
+    WORKS,
+    setWorks
 };

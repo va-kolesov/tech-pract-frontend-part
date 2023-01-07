@@ -2,7 +2,7 @@ import React from 'react';
 import { createStudent, getStudentInfoByStudentID, IAdvisorData, IStudentData, IWorkData, TDataType, updateStudentInfo } from '../Api';
 import {default as Grid, ColumnProps} from '../grid/Grid';
 import './Student.css';
-import {Edit, Exit, Save} from '../Icons';
+import {Add, Edit, Exit, Save} from '../Icons';
 import Overlay from './Overlay';
 
 const STUDENT_COLUMNS: ColumnProps[] = [
@@ -146,6 +146,7 @@ class Student extends React.Component<StudentProps, StudentState> {
         }
         return true;
     }
+
     saveData() {
         if (this.validateData()) {
             if (this.props.selectedStudentID && this.state.studentData) {
@@ -158,6 +159,18 @@ class Student extends React.Component<StudentProps, StudentState> {
             alert('Проверьте правильность введенных данных!');
         }
     }
+
+    addWorksRow() {
+        const advisorData = this.state.advisorData || [];
+        advisorData.push({} as IAdvisorData);
+        const worksData = this.state.worksData || [];
+        worksData.push({
+            AuthorID: this.state.studentData?.ID,
+            Advisor: this.state.advisorData?.[worksData.length - 1]
+        } as IWorkData);
+        this.setState({advisorData: advisorData, worksData: worksData});
+    }
+
     render() { 
         return (
             <div className='Student'>
@@ -184,7 +197,10 @@ class Student extends React.Component<StudentProps, StudentState> {
                 }
                     <div className='Content-Row'>
                         <div className='Content-SubColumn Left'>
-                            <span className='Heading'>Научные работы</span>
+                            <span className='Heading'>Научные работы
+                            {this.state.mode === 'edit' && <Add onClick={() => {
+                                this.addWorksRow();
+                            }}/>}</span>
                             {
                                 this.state.studentData 
                                 ? <Grid isEditable={this.state.mode === 'edit'} 
