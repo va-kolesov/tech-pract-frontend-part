@@ -140,10 +140,11 @@ class Student extends React.Component<StudentProps, StudentState> {
                 if (this.state.advisorData?.length !== this.state.worksData?.length) {
                     return false;
                 } else {
-                    this.state.worksData?.forEach((work, i) => work.Advisor=this.state.advisorData?.[i] as IAdvisorData)
+                    this.state.worksData?.forEach((work, i) => work.Advisor=this.state.advisorData?.[i] as IAdvisorData);
                 }
             }
         }
+        return true;
     }
     saveData() {
         if (this.validateData()) {
