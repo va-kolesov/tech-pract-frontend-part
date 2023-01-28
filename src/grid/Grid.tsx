@@ -35,7 +35,7 @@ const Cell = ({value, CellTemplate, editorData}:
         editorData?: ISelectorData[],
         CellTemplate?: ({value}: {value: TDataType}) => React.ReactElement
     }) => {
-        const val = editorData?.find(e => e.id === value)?.name ?? value;
+        const val = editorData?.find(e => e.id == value)?.name ?? value;
     return (
         <div className='Grid-Cell'>
             {CellTemplate ? <CellTemplate value={value}/> : val?.toString()}
@@ -62,7 +62,7 @@ const Editor = ({value, type, onValueChanged, editorData}:
                     <div className='Grid-Cell'>
                         <select onChange={(event) => onValueChanged(event.target.value as unknown as TDataType)}>
                             {editorData.map(e => {
-                                return <option value={e.id} selected={value === e.id}>{e.name}</option>
+                                return <option key={e.id} value={e.id}>{e.name}</option>
                             })}
                         </select>
                     </div>

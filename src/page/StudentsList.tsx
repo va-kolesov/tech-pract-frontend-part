@@ -40,9 +40,9 @@ class StudentsList extends React.Component<StudentsListProps, StudentsListState>
         getStudentsList().then((students) => {
             this.setState({
                 loaded: true,
-                bach: students.filter((stud) => stud.Degree === this.props.educations[0].id),
-                spec: students.filter((stud) => stud.Degree === this.props.educations[1].id),
-                magi: students.filter((stud) => stud.Degree === this.props.educations[2].id)
+                bach: students.filter((stud) => stud.Degree == this.props.educations[0].id),
+                spec: students.filter((stud) => stud.Degree == this.props.educations[1].id),
+                magi: students.filter((stud) => stud.Degree == this.props.educations[2].id)
             });
         }).catch(() => {
                 this.setState({

@@ -18,6 +18,7 @@ export interface ISelectorData extends Dict {
 }
 
 export interface IWorkData extends Dict {
+    ID: number;
     Caption: string;
     AuthorID: number;
     Type: string;
@@ -146,7 +147,6 @@ export function getStudentsList(): Promise<IStudentData[]> {
         });
     }
 }
-
 export function getStudentInfoByStudentID(ID: number): Promise<IStudentData|null> {
     if (USE_MOCK) {
         return new Promise((resolve, reject) => {
@@ -177,16 +177,11 @@ export function getStudentInfoByStudentID(ID: number): Promise<IStudentData|null
         }).then();
     }
 }
-
 export function updateStudentInfo(StudentInfo: IStudentData): Promise<void> {
     if (USE_MOCK) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const index = STUDENTS.findIndex((student => student.ID === StudentInfo.ID));
-                
-                const worksData = WORKS.filter((work) => work.AuthorID !== StudentInfo.ID);
-                worksData.push(...(StudentInfo.Works || []));
-                setWorks(worksData);
                 if (index !== -1) {
                     STUDENTS[index] = {
                         ...STUDENTS[index],
@@ -212,7 +207,6 @@ export function updateStudentInfo(StudentInfo: IStudentData): Promise<void> {
             }).then();
     }
 }
-
 export function createStudent(StudentInfo: IStudentData): Promise<void> {
     if (USE_MOCK) {
         return new Promise((resolve, reject) => {
@@ -242,14 +236,13 @@ export function createStudent(StudentInfo: IStudentData): Promise<void> {
             }).then();
     }
 }
-
-export function createWork(WorkData: IWorkData): Promise<void> {
+export function updateWorks(WorksData: IWorkData[]): Promise<void> {
     if (USE_MOCK) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                    WORKS.push({
-                        ...WorkData,
-                    });
+                    const worksData = WORKS.filter((work) => !WorksData.find(w => w.ID === work.data));
+                    worksData.push(...WorksData);
+                    setWorks(worksData);
                     resolve();
             }, DELAY)
         });
@@ -257,10 +250,11 @@ export function createWork(WorkData: IWorkData): Promise<void> {
         return fetch(
             API_METHODS.createWork, {
             method: 'POST',
+            mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
             },
-                body: JSON.stringify(WorkData),
+                body: JSON.stringify(WorksData),
             }).then();
     }
 }

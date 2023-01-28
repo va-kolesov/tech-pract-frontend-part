@@ -224,6 +224,7 @@ function getWorkName(seed: number, num: number): string {
 }
 function getWorkData(AuthorID: number, num: number): IWorkData {
     return {
+        ID: AuthorID * 100 + num,
         Caption: getWorkName(AuthorID, num),
         AuthorID: AuthorID,
         Type: WORK_TYPE[num % 2],

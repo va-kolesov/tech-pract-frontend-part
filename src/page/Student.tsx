@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStudent, getStudentInfoByStudentID, IAdvisorData, ISelectorData, IStudentData, IWorkData, TDataType, updateStudentInfo } from '../Api';
+import { createStudent, getStudentInfoByStudentID, IAdvisorData, ISelectorData, IStudentData, IWorkData, TDataType, updateStudentInfo, updateWorks } from '../Api';
 import {default as Grid, ColumnProps} from '../grid/Grid';
 import './Student.css';
 import {Add, Edit, Exit, Save} from '../Icons';
@@ -167,6 +167,9 @@ class Student extends React.Component<StudentProps, StudentState> {
                 updateStudentInfo(this.state.studentData);
             } else if (this.state.studentData) {
                 createStudent(this.state.studentData);
+            }
+            if (this.state.worksData) {
+                updateWorks(this.state.worksData);
             }
             this.setState({mode: 'read'});
         } else {
