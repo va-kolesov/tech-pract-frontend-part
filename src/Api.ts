@@ -52,7 +52,7 @@ const API_METHODS = {
     updateStudentInfo: BACKEND_URL + 'updateStudentInfo',
     createStudent: BACKEND_URL + 'createStudent',
     removeStudent: BACKEND_URL + 'removeStudent',
-    createWork: BACKEND_URL + 'createWork',
+    updateWorks: BACKEND_URL + 'updateWorks',
     removeWork: BACKEND_URL + 'removeWork',
     getDepartments: BACKEND_URL + 'getDepartments',
     getFacults: BACKEND_URL + 'getFacults',
@@ -248,7 +248,7 @@ export function updateWorks(WorksData: IWorkData[]): Promise<void> {
         });
     } else {
         return fetch(
-            API_METHODS.createWork, {
+            API_METHODS.updateWorks, {
             method: 'POST',
             mode: 'cors',
             headers: {
