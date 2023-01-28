@@ -1,9 +1,20 @@
-import { STUDENTS, WORKS, setWorks } from './DataMock';
+import {
+    STUDENTS,
+    WORKS,DEPARTMENTS,
+    FACULTS,
+    EDUCATIONS,
+    setWorks
+} from './DataMock';
 
 export type TDataType = string | number | boolean | undefined | Dict | Dict[];
 
 export interface Dict {
     [key:string]: TDataType;
+}
+
+export interface ISelectorData extends Dict {
+    id: number;
+    name: string;
 }
 
 export interface IWorkData extends Dict {
@@ -18,8 +29,8 @@ export interface IStudentData extends Dict {
     FullName: string;
     ID: number;
     Year: number;
-    Degree: string;
-    Faculty: string;
+    Degree: number;
+    Faculty: number;
     Finished: boolean;
     Works?: IWorkData[];
 }
@@ -37,15 +48,82 @@ const BACKEND_URL = 'http://localhost:8000/';
 const API_METHODS = {
     getStudentsList: BACKEND_URL + 'getStudents',
     getStudentInfoByStudentID: BACKEND_URL + 'getStudentInfoByStudentID',
-    // getWorksByStudentID: BACKEND_URL + 'getWorksByStudentID',
-    // getAdvisorInfoByStudentID: BACKEND_URL + 'getAdvisorInfoByStudentID',
     updateStudentInfo: BACKEND_URL + 'updateStudentInfo',
     createStudent: BACKEND_URL + 'createStudent',
     removeStudent: BACKEND_URL + 'removeStudent',
     createWork: BACKEND_URL + 'createWork',
-    removeWork: BACKEND_URL + 'removeWork'
+    removeWork: BACKEND_URL + 'removeWork',
+    getDepartments: BACKEND_URL + 'getDepartments',
+    getFacults: BACKEND_URL + 'getFacults',
+    getTypeEducation: BACKEND_URL + 'getTypeEducation'
 };
 
+export function getDepartments(): Promise<ISelectorData[]> {
+    if (USE_MOCK) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(DEPARTMENTS);
+            });
+        });
+    } else {
+        return fetch(
+            API_METHODS.getDepartments, 
+            {
+                mode: 'cors'
+            }
+        )
+        .then((response: Response) => {
+            return response.json();
+        })
+        .then((data: {value: ISelectorData[]}) => {
+            return data.value;
+        });
+    }
+}
+export function getFacults(): Promise<ISelectorData[]> {
+    if (USE_MOCK) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(FACULTS);
+            });
+        });
+    } else {
+        return fetch(
+            API_METHODS.getFacults, 
+            {
+                mode: 'cors'
+            }
+        )
+        .then((response: Response) => {
+            return response.json();
+        })
+        .then((data: {value: ISelectorData[]}) => {
+            return data.value;
+        });
+    }
+}
+export function getTypeEducation(): Promise<ISelectorData[]> {
+    if (USE_MOCK) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(EDUCATIONS)
+            });
+        });
+    } else {
+        return fetch(
+            API_METHODS.getTypeEducation, 
+            {
+                mode: 'cors'
+            }
+        )
+        .then((response: Response) => {
+            return response.json();
+        })
+        .then((data: {value: ISelectorData[]}) => {
+            return data.value;
+        });
+    }
+}
 export function getStudentsList(): Promise<IStudentData[]> {
     if (USE_MOCK) {
         return new Promise((resolve) => {

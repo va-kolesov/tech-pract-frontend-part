@@ -1,84 +1,16 @@
 import React from 'react';
-import { createStudent, getStudentInfoByStudentID, IAdvisorData, IStudentData, IWorkData, TDataType, updateStudentInfo } from '../Api';
+import { createStudent, getStudentInfoByStudentID, IAdvisorData, ISelectorData, IStudentData, IWorkData, TDataType, updateStudentInfo } from '../Api';
 import {default as Grid, ColumnProps} from '../grid/Grid';
 import './Student.css';
 import {Add, Edit, Exit, Save} from '../Icons';
 import Overlay from './Overlay';
 
-const STUDENT_COLUMNS: ColumnProps[] = [
-    {
-        displayProperty: 'FullName',
-        header: 'ФИО',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'ID',
-        header: '№ студенческого',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Year',
-        header: 'Год поступления',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Degree',
-        header: 'Ступень образования',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Faculty',
-        header: 'Факультет',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Finished',
-        header: 'Обучение окончено',
-        width: '1fr',
-        type: 'boolean',
-        template: ({value} : {value: TDataType}) => (<div>{value ? 'Да' : 'Нет'}</div>)
-    }
-];
-
-const WORK_COLUMNS: ColumnProps[] = [
-    {
-        displayProperty: 'Caption',
-        header: 'Название',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Type',
-        header: 'Тип',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Mark',
-        header: 'Оценка',
-        width: '1fr'
-    }
-];
-
-const ADVISOR_COLUMNS: ColumnProps[] = [
-    {
-        displayProperty: 'FullName',
-        header: 'ФИО',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Department',
-        header: 'Кафедра',
-        width: '1fr'
-    },
-    {
-        displayProperty: 'Degree',
-        header: 'Научная степень',
-        width: '1fr'
-    }
-];
-
 interface StudentProps {
     selectedStudentID: number | null;
     onExit: Function;
+    educations: ISelectorData[];
+    departments: ISelectorData[];
+    facults: ISelectorData[];
 }
  
 interface StudentState {
@@ -88,6 +20,9 @@ interface StudentState {
     studentData: IStudentData | null;
     worksData: IWorkData[] | null;
     advisorData: IAdvisorData[] | null;
+    studentColumns: ColumnProps[];
+    workColumns: ColumnProps[];
+    advisorColumns: ColumnProps[];
 }
 
 class Student extends React.Component<StudentProps, StudentState> {
@@ -95,8 +30,87 @@ class Student extends React.Component<StudentProps, StudentState> {
     state: StudentState;
     constructor(props: StudentProps) {
         super(props);
+        const STUDENT_COLUMNS: ColumnProps[] = [
+            {
+                displayProperty: 'FullName',
+                header: 'ФИО',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'ID',
+                header: '№ студенческого',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'Year',
+                header: 'Год поступления',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'Degree',
+                header: 'Ступень образования',
+                editorData: props.educations,
+                type: 'enum',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'Faculty',
+                header: 'Факультет',
+                editorData: props.facults,
+                type: 'enum',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'Finished',
+                header: 'Обучение окончено',
+                width: '1fr',
+                type: 'boolean',
+                template: ({value} : {value: TDataType}) => (<div>{value ? 'Да' : 'Нет'}</div>)
+            }
+        ];
+        
+        const WORK_COLUMNS: ColumnProps[] = [
+            {
+                displayProperty: 'Caption',
+                header: 'Название',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'Type',
+                header: 'Тип',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'Mark',
+                header: 'Оценка',
+                width: '1fr'
+            }
+        ];
+        
+        const ADVISOR_COLUMNS: ColumnProps[] = [
+            {
+                displayProperty: 'FullName',
+                header: 'ФИО',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'Department',
+                editorData: props.departments,
+                type: 'enum',
+                header: 'Кафедра',
+                width: '1fr'
+            },
+            {
+                displayProperty: 'Degree',
+                header: 'Научная степень',
+                width: '1fr'
+            }
+        ];
         this.state = {
             loaded: props.selectedStudentID ? false : true,
+            studentColumns: STUDENT_COLUMNS,
+            workColumns: WORK_COLUMNS,
+            advisorColumns: ADVISOR_COLUMNS,
             changed: false,
             mode: props.selectedStudentID ? 'read' : 'edit',
             studentData: props.selectedStudentID ? null : {} as IStudentData,
@@ -180,7 +194,7 @@ class Student extends React.Component<StudentProps, StudentState> {
                 {
                     this.state.studentData 
                     ? <Grid isEditable={this.state.mode === 'edit'}
-                            columnsProps={STUDENT_COLUMNS}
+                            columnsProps={this.state.studentColumns}
                             onValueChanged={
                                 (val, field) => {
                                     if (this.state.studentData) {
@@ -198,13 +212,15 @@ class Student extends React.Component<StudentProps, StudentState> {
                     <div className='Content-Row'>
                         <div className='Content-SubColumn Left'>
                             <span className='Heading'>Научные работы
-                            {this.state.mode === 'edit' && <Add onClick={() => {
-                                this.addWorksRow();
-                            }}/>}</span>
+                            {
+                                this.state.mode === 'edit' && <Add onClick={() => {
+                                    this.addWorksRow();
+                                }}/>
+                            }</span>
                             {
                                 this.state.studentData 
                                 ? <Grid isEditable={this.state.mode === 'edit'} 
-                                        columnsProps={WORK_COLUMNS}
+                                        columnsProps={this.state.workColumns}
                                         data={this.state.worksData || []}
                                         onValueChanged={
                                             (val, field, index) => {
@@ -226,7 +242,7 @@ class Student extends React.Component<StudentProps, StudentState> {
                             {
                                 this.state.studentData 
                                 ? <Grid isEditable={this.state.mode === 'edit'}
-                                        columnsProps={ADVISOR_COLUMNS}
+                                        columnsProps={this.state.advisorColumns}
                                         data={this.state.advisorData || []}
                                         onValueChanged={
                                             (val, field, index) => {

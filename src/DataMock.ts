@@ -1,108 +1,155 @@
 import { IAdvisorData, IWorkData } from "./Api";
 
+export const DEPARTMENTS = [
+    {
+        id: 1,
+        name: 'Математического моделирования'
+    },
+    {
+        id: 2,
+        name: 'Интересных вещей'
+    },
+    {
+        id: 3,
+        name: 'Защиты информации'
+    },
+    {
+        id: 4,
+        name: 'Научных технологий'
+    }
+];
+export const FACULTS = [
+    {
+        id: 1,
+        name: 'Математический'
+    },
+    {
+        id: 2,
+        name: 'Физический'
+    },
+    {
+        id: 3,
+        name: 'ИВТ'
+    }
+];
+export const EDUCATIONS = [
+    {
+        id: 1,
+        name: 'Бакалавриат'
+    },
+    {
+        id: 2,
+        name: 'Магистратура'
+    },
+    {
+        id: 3,
+        name: 'Специалитет'
+    }
+];
+
 const STUDENTS = [
     {
         FullName: 'Апельсинова Анастасия Андреевна',
         ID: 12345678,
         Year: 2017,
-        Degree: 'Бакалавриат',
-        Faculty: 'Математический',
+        Degree: 1,
+        Faculty: 1,
         Finished: true
     },
     {
         FullName: 'Бананов Борис Брониславович',
         ID: 12345679,
         Year: 2016,
-        Degree: 'Магистратура',
-        Faculty: 'Математический',
+        Degree: 2,
+        Faculty: 1,
         Finished: true
     },
     {
         FullName: 'Вишневая Виктория Витальевна',
         ID: 12345680,
         Year: 2021,
-        Degree: 'Бакалавриат',
-        Faculty: 'Математический',
+        Degree: 1,
+        Faculty: 1,
         Finished: false
     },
     {
         FullName: 'Грушевский Георгий Георгиевич',
         ID: 12345681,
         Year: 2022,
-        Degree: 'Специалитет',
-        Faculty: 'Математический',
+        Degree: 3,
+        Faculty: 1,
         Finished: false
     },
     {
         FullName: 'Дынный Дмитрий Денисович',
         ID: 12345682,
         Year: 2019,
-        Degree: 'Бакалавриат',
-        Faculty: 'Математический',
+        Degree: 1,
+        Faculty: 1,
         Finished: false
     },
     {
         FullName: 'Ежевичкина Екатерина Евгеньевна',
         ID: 12345683,
         Year: 2018,
-        Degree: 'Специалитет',
-        Faculty: 'Математический',
+        Degree: 3,
+        Faculty: 1,
         Finished: true
     },
     {
         FullName: 'Жимолостева Жанна Живодраговна',
         ID: 12345684,
         Year: 2019,
-        Degree: 'Магистратура',
-        Faculty: 'Математический',
+        Degree: 2,
+        Faculty: 1,
         Finished: true
     },
     {
         FullName: 'Земляничный Захар Захарович',
         ID: 12345685,
         Year: 2017,
-        Degree: 'Специалитет',
-        Faculty: 'Математический',
+        Degree: 3,
+        Faculty: 1,
         Finished: true
     },
     {
         FullName: 'Инжиров Игнат Игоревич',
         ID: 12345686,
         Year: 2017,
-        Degree: 'Бакалавриат',
-        Faculty: 'Физический',
+        Degree: 1,
+        Faculty: 2,
         Finished: true
     },
     {
         FullName: 'Киви Кирилл Константинович',
         ID: 12345687,
         Year: 2019,
-        Degree: 'Магистратура',
-        Faculty: 'Математический',
+        Degree: 2,
+        Faculty: 1,
         Finished: true
     },
     {
         FullName: 'Лимонова Лариса Леонидовна',
         ID: 12345688,
         Year: 2016,
-        Degree: 'Бакалавриат',
-        Faculty: 'ИВТ',
+        Degree: 1,
+        Faculty: 3,
         Finished: true
     },
     {
         FullName: 'Манго Мария Марковна',
         ID: 12345689,
         Year: 2017,
-        Degree: 'Бакалавриат',
-        Faculty: 'Математический',
+        Degree: 1,
+        Faculty: 1,
         Finished: true
     },
     {
         FullName: 'Нектаринков Никита Николаевич',
         ID: 12345690,
         Year: 2019,
-        Degree: 'Магистратура',
-        Faculty: 'ИВТ',
+        Degree: 2,
+        Faculty: 3,
         Finished: true
     }
 ];

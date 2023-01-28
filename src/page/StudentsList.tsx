@@ -1,6 +1,6 @@
 import React from 'react';
-import { Dict, getStudentsList, IStudentData } from '../Api';
-import Grid from '../grid/Grid';
+import { Dict, getStudentsList, ISelectorData, IStudentData } from '../Api';
+import Grid, { ColumnProps } from '../grid/Grid';
 import {default as List} from '../list/List';
 import Overlay from './Overlay';
 import './StudentsList.css';
@@ -8,36 +8,28 @@ import {Add} from '../Icons';
 interface StudentsListProps {
     onOpenStudent: Function;
     onAddStudent: Function;
+    educations: ISelectorData[];
 }
  
 interface StudentsListState {
     bach: IStudentData[] | null;
     spec: IStudentData[] | null;
     magi: IStudentData[] | null;
+    headerColumns: ColumnProps[];
     loaded: boolean;
 }
-
-const GRID_HEADER_COLUMNS = [
-    {
-        header: 'Бакалавриат',
-        displayProperty: 'Бакалавриат'
-    },
-    {
-        header: 'Специалитет',
-        displayProperty: 'Специалитет'
-    },
-    {
-        header: 'Магистратура',
-        displayProperty: 'Магистратура'
-    },
-]
 
 class StudentsList extends React.Component<StudentsListProps, StudentsListState> {
     state: StudentsListState;
     constructor(props: StudentsListProps) {
         super(props);
+        const headerColumns = this.props.educations.map((ed) => ({
+            header: ed.name,
+            displayProperty: ed.name
+        }))
         this.state = {
             loaded: false,
+            headerColumns,
             bach: null,
             spec: null,
             magi: null
@@ -48,9 +40,9 @@ class StudentsList extends React.Component<StudentsListProps, StudentsListState>
         getStudentsList().then((students) => {
             this.setState({
                 loaded: true,
-                bach: students.filter((stud) => stud.Degree === 'Бакалавриат'),
-                spec: students.filter((stud) => stud.Degree === 'Специалитет'),
-                magi: students.filter((stud) => stud.Degree === 'Магистратура')
+                bach: students.filter((stud) => stud.Degree === this.props.educations[0].id),
+                spec: students.filter((stud) => stud.Degree === this.props.educations[1].id),
+                magi: students.filter((stud) => stud.Degree === this.props.educations[2].id)
             });
         }).catch(() => {
                 this.setState({
@@ -86,7 +78,7 @@ class StudentsList extends React.Component<StudentsListProps, StudentsListState>
                 <Add onClick={() => {
                     this.props.onAddStudent();
                 }}/></span>
-                <Grid data={[]} columnsProps={GRID_HEADER_COLUMNS} ></Grid>
+                <Grid data={[]} columnsProps={this.state.headerColumns} ></Grid>
                 <div className='Content-Row'>
                     <List colorStyle='violet' template={this.template} data={this.state.bach}/>
                     <List colorStyle='green' template={this.template} data={this.state.spec}/>

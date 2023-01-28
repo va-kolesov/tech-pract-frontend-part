@@ -1,11 +1,12 @@
 import * as React from 'react';
 import './Grid.css';
-import type {Dict, TDataType} from '../Api';
+import type {Dict, ISelectorData, TDataType} from '../Api';
 
 export interface ColumnProps {
     displayProperty: string;
-    type?: 'boolean' | 'string' | 'number';
+    type?: 'boolean' | 'string' | 'number' | 'enum';
     isEditing?: boolean;
+    editorData?: ISelectorData[];
     template?: ({value}: {value: TDataType}) => React.ReactElement;
     width?: string;
     header?: string;
@@ -28,14 +29,26 @@ const getColumnsStyle = (columns: ColumnProps[]) => {
     return {'gridTemplateColumns': gridTemplateColumns};
 }
 
-const Cell = ({value, CellTemplate}: {value: TDataType, CellTemplate?: ({value}: {value: TDataType}) => React.ReactElement}) => {
+const Cell = ({value, CellTemplate, editorData}:
+    {
+        value: TDataType,
+        editorData?: ISelectorData[],
+        CellTemplate?: ({value}: {value: TDataType}) => React.ReactElement
+    }) => {
+        const val = editorData?.find(e => e.id === value)?.name ?? value;
     return (
         <div className='Grid-Cell'>
-            {CellTemplate ? <CellTemplate value={value}/> : value?.toString()}
+            {CellTemplate ? <CellTemplate value={value}/> : val?.toString()}
         </div>
     );
 }
-const Editor = ({value, type, onValueChanged}: {value: TDataType, type?: string, onValueChanged: (val: TDataType) => void}) => {
+const Editor = ({value, type, onValueChanged, editorData}:
+    {
+        value: TDataType,
+        type?: string,
+        editorData?: ISelectorData[]
+        onValueChanged: (val: TDataType) => void
+    }) => {
     switch(type) {
         case 'boolean':
             return (
@@ -43,6 +56,18 @@ const Editor = ({value, type, onValueChanged}: {value: TDataType, type?: string,
                     <input type={'checkbox'} checked={value as boolean} onChange={(event) => onValueChanged(event.target.value as unknown as TDataType)}/>
                 </div>
             );
+        case 'enum':
+            if (editorData) {
+                return (
+                    <div className='Grid-Cell'>
+                        <select onChange={(event) => onValueChanged(event.target.value as unknown as TDataType)}>
+                            {editorData.map(e => {
+                                return <option value={e.id} selected={value === e.id}>{e.name}</option>
+                            })}
+                        </select>
+                    </div>
+                );
+            }
         default: 
             return (
                 <div className='Grid-Cell'>
@@ -82,12 +107,14 @@ const Row = ({
                         return <Editor key={column.displayProperty}
                                        value={data[column.displayProperty] || ''}
                                        type={column.type}
+                                       editorData={column.editorData}
                                        onValueChanged={(newVal) => {
                                             onValueChanged(newVal, column.displayProperty)
                                        }}/>
                     }
                     return (
                         <Cell  key={column.displayProperty}
+                               editorData={column.editorData}
                                value={data[column.displayProperty]}
                                CellTemplate={column.template}/>
                     )
